@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ebook_shop/Pages/HalamanUtama.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
@@ -10,8 +9,35 @@ class HalamanLogin extends StatefulWidget {
 }
 
 class _HalamanLoginState extends State<HalamanLogin> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  late SharedPreferences logindata;
+  late bool newuser;
+
+  @override
+  void initState() {
+// TODO: implement initState
+    super.initState();
+    check_if_already_login();
+  }
+
+  void check_if_already_login() async {
+    logindata = await SharedPreferences.getInstance();
+    newuser = (logindata.getBool('login') ?? true);
+    print(newuser);
+    if (newuser == false) {
+      Navigator.pushReplacement(
+          context, new MaterialPageRoute(builder: (context) => HalamanUtama()));
+    }
+  }
+
+  @override
+  void dispose() {
+// Clean up the controller when the widget is disposed.
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   // Enkripsi kata sandi sebelum disimpan
   String _encryptPassword(String password) {
@@ -24,13 +50,15 @@ class _HalamanLoginState extends State<HalamanLogin> {
 
   // Proses validasi login
   void _login() {
-    final enteredUsername = _usernameController.text;
-    final enteredPassword = _passwordController.text;
+    String enteredUsername = _usernameController.text;
+    String enteredPassword = _passwordController.text;
 
     // Contoh validasi sederhana, bisa disesuaikan dengan kebutuhan
     if (enteredUsername == 'k' && enteredPassword == 'password') {
       final encryptedPassword = _encryptPassword(enteredPassword);
-      _saveLoginStatus(enteredUsername, encryptedPassword);
+      logindata.setBool('login', false);
+      logindata.setString('username', enteredUsername);
+      logindata.setString('password', encryptedPassword);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HalamanUtama()),
@@ -38,14 +66,6 @@ class _HalamanLoginState extends State<HalamanLogin> {
     } else {
       _showErrorDialog('Login failed. Please try again.');
     }
-  }
-
-  // Menyimpan status login dengan shared preferences
-  void _saveLoginStatus(String username, String encryptedPassword) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('username', username);
-    prefs.setString('password', encryptedPassword);
-    prefs.setBool('isLoggedIn', true);
   }
 
   void _showErrorDialog(String message) {
@@ -78,7 +98,8 @@ class _HalamanLoginState extends State<HalamanLogin> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('LitLabs',
+                Text(
+                  'LitLabs',
                   style: TextStyle(
                     color: Color(0xFF800000),
                     fontWeight: FontWeight.bold,
@@ -93,17 +114,14 @@ class _HalamanLoginState extends State<HalamanLogin> {
                     fontSize: 15,
                   ),
                 ),
-
                 SizedBox(height: 50),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.2),
                         border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(20)
-                    ),
+                        borderRadius: BorderRadius.circular(20)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
@@ -118,17 +136,14 @@ class _HalamanLoginState extends State<HalamanLogin> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.2),
                         border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(20)
-                    ),
+                        borderRadius: BorderRadius.circular(20)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
@@ -144,7 +159,6 @@ class _HalamanLoginState extends State<HalamanLogin> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 100.0),
@@ -170,7 +184,6 @@ class _HalamanLoginState extends State<HalamanLogin> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -18,7 +18,9 @@ class HalamanUtama extends StatefulWidget {
 class _HalamanUtamaState extends State<HalamanUtama> {
   late SharedPreferences logindata;
   late String username;
-  //@override
+  late String password;
+
+  @override
   void initState() {
     super.initState();
     initial();
@@ -28,9 +30,9 @@ class _HalamanUtamaState extends State<HalamanUtama> {
     logindata = await SharedPreferences.getInstance();
     setState(() {
       username = logindata.getString('username')!;
+      password = logindata.getString('password')!;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +54,9 @@ class _HalamanUtamaState extends State<HalamanUtama> {
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () {
-              logindata.setBool("Login", true);
+              logindata.setBool("login", true);
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) {
+                  new MaterialPageRoute(builder: (context) {
                 return HalamanLogin();
               }));
             },
@@ -63,41 +65,9 @@ class _HalamanUtamaState extends State<HalamanUtama> {
       ),
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Text(
-              "What should we read today, $username?",  // Add this Text widget with the desired text
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'BebasNeue',
-                fontSize: 40.0,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-            child: Text(
-             "Fun Fact:",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
-            child: Text(
-              "Reading a good book after a long and stressful day works wonders on our state of mind. Studies have actually shown that leafing through a book can be up to 600% more efficient in relieving stress than playing a video game "
-                  "and 300% more efficient than going for a walk. Now that’s a fun fact about reading.",  // Add this Text widget with the desired text
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 13.0,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
+          _welcomeTitle(),
+          //_searchField(),
+          _funFact(),
           _buildListBooks(),
         ],
       ),
@@ -105,40 +75,56 @@ class _HalamanUtamaState extends State<HalamanUtama> {
     );
   }
 
-  BottomNavigationBar bottomNavBar(BuildContext context) {
-    return BottomNavigationBar(
-      backgroundColor: Color(0xFF800000),
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.white,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+  Padding _welcomeTitle() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
+      child: Text(
+        "What should we read today, $username?", // Add this Text widget with the desired text
+        style: TextStyle(
+          color: Colors.black,
+          fontFamily: 'BebasNeue',
+          fontSize: 40.0,
+          fontWeight: FontWeight.normal,
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_cart_outlined),
-          label: 'Cart',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_2_outlined),
-          label: 'Profile',
-        ),
+      ),
+    );
+  }
 
-      ],
-      onTap: (int index) {
-        if (index == 0) {
-        } else if (index == 1) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HalamanRequestBuku()),
-          );
-        } else if (index == 2) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HalamanProfile()),
-          );
-        }
-      },
+  Container _funFact() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Fun Fact:",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 4), // Spasi antara teks
+              Text(
+                "Reading a good book after a long and stressful day works wonders on our state of mind. Studies have actually shown that leafing through a book can be up to 600% more efficient in relieving stress than playing a video game "
+                "and 300% more efficient than going for a walk. Now that’s a fun fact about reading.",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -157,9 +143,7 @@ class _HalamanUtamaState extends State<HalamanUtama> {
   }
 
   Container _searchField() {
-    void updateList() {
-      //
-    }
+    void updateList() {}
 
     final TextEditingController _searchController = TextEditingController();
     return Container(
@@ -181,7 +165,6 @@ class _HalamanUtamaState extends State<HalamanUtama> {
           contentPadding: EdgeInsets.all(15),
           hintText: "Search",
           prefixIcon: Icon(Icons.search_outlined),
-          //suffixIcon: Icon(Icons.filter_list),
           suffixIcon: IconButton(
             icon: Icon(Icons.search),
             onPressed: () {},
@@ -246,7 +229,7 @@ class _HalamanUtamaState extends State<HalamanUtama> {
           ),
         ),
         Container(
-          height: 340,
+          height: 300,
           //color: Colors.blue,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
@@ -278,7 +261,7 @@ class _HalamanUtamaState extends State<HalamanUtama> {
           ),
         ),
         Container(
-          height: 340,
+          height: 300,
           //color: Colors.blue,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
@@ -311,7 +294,7 @@ class _HalamanUtamaState extends State<HalamanUtama> {
           ),
         ),
         Container(
-          height: 340,
+          height: 300,
           //color: Colors.blue,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
@@ -368,7 +351,6 @@ class _HalamanUtamaState extends State<HalamanUtama> {
                 width: 20,
               ),
               Container(
-                //decoration: BoxDecoration(color: Colors.grey),
                 width: 150,
                 height: 150,
                 child: Image.network(booksData.image!),
@@ -397,4 +379,40 @@ class _HalamanUtamaState extends State<HalamanUtama> {
       ),
     );
   }
+}
+
+BottomNavigationBar bottomNavBar(BuildContext context) {
+  return BottomNavigationBar(
+    backgroundColor: Color(0xFF800000),
+    selectedItemColor: Colors.black,
+    unselectedItemColor: Colors.white,
+    items: [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        label: 'Home',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.shopping_cart_outlined),
+        label: 'Cart',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.person_2_outlined),
+        label: 'Profile',
+      ),
+    ],
+    onTap: (int index) {
+      if (index == 0) {
+      } else if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HalamanRequestBuku()),
+        );
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HalamanProfile()),
+        );
+      }
+    },
+  );
 }

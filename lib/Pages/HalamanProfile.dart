@@ -1,8 +1,9 @@
 import 'package:ebook_shop/Pages/HalamanRequestBuku.dart';
 import 'package:ebook_shop/Pages/HalamanUtama.dart';
-import 'package:ebook_shop/camera.dart'; // Import the camera page
+import 'package:ebook_shop/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 
 class HalamanProfile extends StatefulWidget {
   const HalamanProfile({super.key});
@@ -14,7 +15,7 @@ class HalamanProfile extends StatefulWidget {
 class _HalamanProfileState extends State<HalamanProfile> {
   late SharedPreferences logindata;
   late String username;
-  late String profileImagePath; // Add a variable to store the profile image path
+  late String profileImagePath;
 
   @override
   void initState() {
@@ -29,8 +30,6 @@ class _HalamanProfileState extends State<HalamanProfile> {
       profileImagePath = logindata.getString('profileImage') ?? '';
     });
   }
-
-  int _selectedIndex = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +53,7 @@ class _HalamanProfileState extends State<HalamanProfile> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             profile(),
+            TeamProfile(),
             kesanPesan(),
           ],
         ),
@@ -64,7 +64,24 @@ class _HalamanProfileState extends State<HalamanProfile> {
 
   Container profile() {
     return Container(
-      color: Colors.grey[500],
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black
+                .withOpacity(0.4),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset:
+                Offset(0, 3),
+          ),
+        ],
+        image: DecorationImage(
+          image: AssetImage(
+              'assets/Background.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      //color: Colors.grey[500],
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -72,31 +89,32 @@ class _HalamanProfileState extends State<HalamanProfile> {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                _openCamera(); // Open camera when the profile picture is tapped
+                _showCameraBottomSheet(context);
               },
               child: CircleAvatar(
                 radius: 50.0,
                 foregroundImage: profileImagePath.isNotEmpty
-                    ? AssetImage(profileImagePath)
-                    : AssetImage('assets/profile_placeholder.jpeg'),
+                    ? Image.file(File(profileImagePath)).image
+                    : Image.asset('assets/profile_placeholder.jpeg').image,
               ),
             ),
             SizedBox(height: 10.0),
             Text(
-              '$username',
+              'Welcome, $username',
               style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.black,
+                fontFamily: 'BebasNeue',
+                fontSize: 29.0,
+                fontWeight: FontWeight.normal,
               ),
             ),
-            SizedBox(height: 10.0),
             Text(
-              'Nabil Makarim Hasymi',
+              "Premium User",
               style: TextStyle(
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.black,
+                fontFamily: 'BebasNeue',
+                fontSize: 16.0,
+                fontWeight: FontWeight.w100,
               ),
             ),
           ],
@@ -105,11 +123,10 @@ class _HalamanProfileState extends State<HalamanProfile> {
     );
   }
 
-  // Function to open the camera and update the profile picture
   void _openCamera() async {
-    String imagePath = await Navigator.push(
+    String? imagePath = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CameraPage()),
+      MaterialPageRoute(builder: (context) => Camera()),
     );
 
     if (imagePath != null && imagePath.isNotEmpty) {
@@ -117,9 +134,31 @@ class _HalamanProfileState extends State<HalamanProfile> {
         profileImagePath = imagePath;
       });
 
-      // Save the updated profile image path to SharedPreferences
+
       logindata.setString('profileImage', imagePath);
     }
+  }
+
+  void _showCameraBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        // Adjust the height property as needed, for example, MediaQuery.of(context).size.height / 4
+        return Container(
+          height: MediaQuery.of(context).size.height / 4,
+          child: Camera(),
+        );
+      },
+    ).then((value) {
+      if (value != null && value.isNotEmpty) {
+        setState(() {
+          profileImagePath = value;
+        });
+
+        // Save the updated profile image path to SharedPreferences
+        logindata.setString('profileImage', value);
+      }
+    });
   }
 
 
@@ -141,42 +180,15 @@ class _HalamanProfileState extends State<HalamanProfile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Kesan',
+                    'About App',
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  //SizedBox(height: 8.0),
+                  SizedBox(height: 8.0),
                   Text(
-                    'Mata Kuliah Pemrograman Aplikasi Mobile yang saya ampu terasa sangat menyenangkan dan menantang. \nSemoga ke depannya saya dapat menerapkan ilmu yang didapat dengan sebaik-baiknya.',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10.0),
-          Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Pesan',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  //SizedBox(height: 8.0),
-                  Text(
-                    'Semoga Pak Bagus mendapat hidayah agar memberi nilai akhir saya A',
+                    'LitLabs adalah aplikasi sederhana yang dapat mengakses data e-books yang tersedia dalam API. Terdapat beberapa fitur seperti login, akses ebooks, request books, dan profile.',
                     style: TextStyle(fontSize: 16.0),
                   ),
                 ],
@@ -188,7 +200,97 @@ class _HalamanProfileState extends State<HalamanProfile> {
     );
   }
 
+  Container TeamProfile() {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 50.0,
+                      backgroundImage: AssetImage("assets/profile.jpeg"),
+                    ),
+                    SizedBox(height: 12.0),
+                    Text(
+                      "Nabil Makarim H.",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      '124210056',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      'Job Desc: Backend',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0), // Spacing between cards
+          Expanded(
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 50.0,
+                      backgroundImage: AssetImage("assets/aku.jpg"),
+                    ),
+                    SizedBox(height: 12.0),
+                    Text(
+                      "Mutiara Hasna",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      '124210029',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      'Job Desc: Backend',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   BottomNavigationBar bottomNavBar(BuildContext context) {
+    int _selectedIndex = 2;
     return BottomNavigationBar(
       backgroundColor: Color(0xFF800000),
       selectedItemColor: Colors.black,
@@ -210,7 +312,7 @@ class _HalamanProfileState extends State<HalamanProfile> {
       currentIndex: _selectedIndex,
       onTap: (int index) {
         if (index == 0) {
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HalamanUtama()),
           );

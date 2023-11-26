@@ -1,69 +1,108 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 
-class CameraPage extends StatefulWidget {
+class Camera extends StatefulWidget {
   @override
-  _CameraPageState createState() => _CameraPageState();
+  State<StatefulWidget> createState() {
+    return _CameraState();
+  }
 }
 
-class _CameraPageState extends State<CameraPage> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+class _CameraState extends State<Camera> {
+  final ImagePicker _picker = ImagePicker();
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeControllerFuture = _initializeCamera();
-  }
-
-  Future<void> _initializeCamera() async {
-    final cameras = await availableCameras();
-    final firstCamera = cameras.first;
-
-    _controller = CameraController(
-      firstCamera,
-      ResolutionPreset.medium,
-    );
-
-    return _controller.initialize();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  Future<String?> getImage(bool isCamera) async {
+    final XFile? image;
+    if (isCamera) {
+      image = await _picker.pickImage(source: ImageSource.camera);
+    } else {
+      image = await _picker.pickImage(source: ImageSource.gallery);
+    }
+    return image?.path;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Camera Page'),
+      backgroundColor: Color(0xFF800000),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CardButton(
+              onPressed: () async {
+                String? imagePath = await getImage(false);
+                if (imagePath != null) {
+                  Navigator.pop(context, imagePath);
+                }
+              },
+              icon: Icons.image,
+              text: 'Choose from gallery',
+            ),
+            SizedBox(height: 20),
+            CardButton(
+              onPressed: () async {
+                String? imagePath = await getImage(true);
+                if (imagePath != null) {
+                  Navigator.pop(context, imagePath);
+                }
+              },
+              icon: Icons.camera_alt,
+              text: 'Take with camera',
+            ),
+          ],
+        ),
       ),
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return CameraPreview(_controller);
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+    );
+  }
+}
+
+class CardButton extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final IconData? icon;
+  final String? text;
+
+  const CardButton({
+    Key? key,
+    required this.onPressed,
+    required this.icon,
+    required this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 300, // Set your desired width
+      height: 60, // Set your desired height
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: InkWell(
+          onTap: onPressed,
+          child: Padding(
+            padding: const EdgeInsets.all(0.5),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 20),
+                SizedBox(height: 3),
+                Text(
+                  text!,
+                  style: TextStyle(
+                    color: Colors.grey[850],
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          try {
-            await _initializeControllerFuture;
-            final XFile image = await _controller.takePicture();
-            // Pass the captured image path back to the calling widget
-            Navigator.pop(context, image.path);
-          } catch (e) {
-            print('Error: $e');
-          }
-        },
-        child: Icon(Icons.camera),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

@@ -30,7 +30,7 @@ class _HalamanRequestBukuState extends State<HalamanRequestBuku> {
       appBar: AppBar(
         backgroundColor: Color(0xFF800000),
         title: Text(
-          "REQUEST BUKU",
+          "BOOK REQUEST",
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'BebasNeue',
@@ -213,7 +213,7 @@ BottomNavigationBar bottomNavBar(BuildContext context) {
     currentIndex: _selectedIndex,
     onTap: (int index) {
       if (index == 0) {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HalamanUtama()),
         );

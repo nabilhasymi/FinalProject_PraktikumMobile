@@ -1,5 +1,7 @@
-
 import 'package:ebook_shop/Model/recentBooksModel.dart';
+import 'package:ebook_shop/Pages/HalamanProfile.dart';
+import 'package:ebook_shop/Pages/HalamanRequestBuku.dart';
+import 'package:ebook_shop/Pages/HalamanUtama.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,7 +14,14 @@ class DetailBooks extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(booksData.title! + " Detail",),
+        title: Text(
+          "Book Details",
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'BebasNeue',
+            fontSize: 28.0,
+          ),
+        ),
         backgroundColor: Color(0xFF800000),
       ),
       body: _buildBookDetail(),
@@ -24,6 +33,7 @@ class DetailBooks extends StatelessWidget {
         label: Text('See More...'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      bottomNavigationBar: bottomNavBar(context),
     );
   }
 
@@ -64,9 +74,7 @@ class DetailBooks extends StatelessWidget {
                       child: Text(
                         'Sub Title',
                         style: TextStyle(
-                            fontSize: 16,
-                        fontWeight: FontWeight.bold),
-
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -88,8 +96,8 @@ class DetailBooks extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'Penulis',
-                        style: TextStyle(fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -111,8 +119,8 @@ class DetailBooks extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'Deskripsi',
-                        style: TextStyle(fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -133,6 +141,46 @@ class DetailBooks extends StatelessWidget {
           // Other book details can be added here
         ],
       ),
+    );
+  }
+
+  BottomNavigationBar bottomNavBar(BuildContext context) {
+    return BottomNavigationBar(
+      backgroundColor: Color(0xFF800000),
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.white,
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart_outlined),
+          label: 'Cart',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_2_outlined),
+          label: 'Profile',
+        ),
+      ],
+      onTap: (int index) {
+        if (index == 0) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HalamanUtama()),
+          );
+        } else if (index == 1) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HalamanRequestBuku()),
+          );
+        } else if (index == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HalamanProfile()),
+          );
+        }
+      },
     );
   }
 

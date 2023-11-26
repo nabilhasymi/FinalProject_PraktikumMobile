@@ -7,6 +7,7 @@ environment:
   sdk: ">=3.1.0 <4.0.0"
 
 dependencies:
+  camera: 0.10.5+5
   encrypt: ^5.0.3
   flutter:
     sdk: flutter
@@ -15,9 +16,9 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^1.1.0
-  camera: 0.10.5+5
   image_picker: 1.0.4
   intl: ^0.18.1
+  lorem_ipsum_generator: ^0.0.3
   path_provider: ^2.1.1
   provider: ^5.0.0
   shared_preferences: ^2.2.2

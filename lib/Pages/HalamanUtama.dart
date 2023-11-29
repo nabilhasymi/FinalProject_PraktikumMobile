@@ -66,7 +66,7 @@ class _HalamanUtamaState extends State<HalamanUtama> {
       body: ListView(
         children: [
           _welcomeTitle(),
-          //_searchField(),
+          _searchField(),
           _funFact(),
           _buildListBooks(),
         ],

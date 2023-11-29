@@ -215,7 +215,7 @@ class _HalamanProfileState extends State<HalamanProfile> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     CircleAvatar(
@@ -224,7 +224,7 @@ class _HalamanProfileState extends State<HalamanProfile> {
                     ),
                     SizedBox(height: 12.0),
                     Text(
-                      "Nabil Makarim H.",
+                      "Nabil Hasymi",
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -237,7 +237,9 @@ class _HalamanProfileState extends State<HalamanProfile> {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      'Job Desc: Backend',
+                      'Job Desc: '
+                          '\nBack end'
+                          '\nFront end',
                       style: TextStyle(fontSize: 16.0),
                     ),
                   ],
@@ -252,10 +254,10 @@ class _HalamanProfileState extends State<HalamanProfile> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+              child: const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleAvatar(
                       radius: 50.0,
@@ -276,7 +278,9 @@ class _HalamanProfileState extends State<HalamanProfile> {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      'Job Desc: Backend',
+                      'Job Desc: '
+                          '\nBack end'
+                          '\nFront end',
                       style: TextStyle(fontSize: 16.0),
                     ),
                   ],

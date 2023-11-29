@@ -54,7 +54,7 @@ class _HalamanLoginState extends State<HalamanLogin> {
     String enteredPassword = _passwordController.text;
 
     // Contoh validasi sederhana, bisa disesuaikan dengan kebutuhan
-    if (enteredUsername == 'k' && enteredPassword == 'password') {
+    if (enteredUsername == 'prakpam' && enteredPassword == 'password') {
       final encryptedPassword = _encryptPassword(enteredPassword);
       logindata.setBool('login', false);
       logindata.setString('username', enteredUsername);

@@ -185,10 +185,11 @@ class DetailBooks extends StatelessWidget {
   }
 
   Future<void> _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+    try {
+      // Android
+      await launch(url, forceSafariVC: false);
+    } catch (e) {
+      print('Error launching URL: $e');
     }
   }
 }

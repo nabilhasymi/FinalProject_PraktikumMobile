@@ -16,7 +16,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^1.1.0
-  image_picker: 1.0.4
+  image_picker: ^1.0.4
   intl: ^0.18.1
   lorem_ipsum_generator: ^0.0.3
   path_provider: ^2.1.1
